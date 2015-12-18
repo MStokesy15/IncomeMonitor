@@ -76,7 +76,7 @@ public class IMGui extends javax.swing.JFrame {
 
         Object[][] data = {{"Kathy", "Smith", 5, 1}};
         for (String a : columnNames)
-        System.out.println(a);
+            System.out.println(a);
         //final JTable table = new JTable(data, columnNames);
         summaryTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
         summaryTable.setFillsViewportHeight(true);

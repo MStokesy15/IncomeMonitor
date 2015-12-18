@@ -27,14 +27,7 @@ public class Creditor {
             
 public void changeStatus()
 {
-    if (status)
-    {
-        status = false;
-    }
-    else
-    {
-        status = true;
-    }
+    status = !status;
 }
 
 @Override
