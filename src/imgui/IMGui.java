@@ -29,7 +29,7 @@ public class IMGui extends javax.swing.JFrame {
     private void addCreditor(){
         try{
             accountant.addCreditor(addCreditorNameField.getText(),
-                (String)addCreditorPaymentDateComboBox.getSelectedItem(),
+                Integer.parseInt((String)addCreditorPaymentDateComboBox.getSelectedItem()),
                 Double.parseDouble(addCreditorPaymentDueField.getText()),
                 Double.parseDouble(addCreditorBalanceDueField.getText()));
             updateCreditorList();
@@ -73,13 +73,33 @@ public class IMGui extends javax.swing.JFrame {
         for (int i = 0; i < summaryTable.getColumnCount(); i++){
             columnNames[i] = (String)summaryTable.getColumnName(i);
         }        
-
-        Object[][] data = {{"Kathy", "Smith", 5, 1}};
-        for (String a : columnNames)
-            System.out.println(a);
+       
+        Object[][] data = new Object[accountant.getStatusesTrue()][summaryTable.getColumnCount()];
+        int counter = 0;
+        System.out.println(accountant.getStatusesTrue());
+        for (Creditor a : accountant.getCreditors()){
+            if (a.getStatus()){
+                data[counter][0] = (a.getName());
+                data[counter][1] = (a.getDate());
+                data[counter][2] = (a.getAmount());
+                data[counter][3] = (a.getBalance());
+                counter++;
+            }
+        }
+        
         //final JTable table = new JTable(data, columnNames);
         summaryTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
         summaryTable.setFillsViewportHeight(true);
+    }
+    
+    private void populatePayeeList(){
+        addPaymentListBox.setModel(new DefaultComboBoxModel());
+        for (Creditor aCreditor : accountant.getCreditors()){
+            if (!aCreditor.getStatus()){
+                addPaymentListBox.addItem(aCreditor);
+            }
+        }
+        System.out.println(accountant.getCreditors());
     }
     
     /**
@@ -258,6 +278,11 @@ public class IMGui extends javax.swing.JFrame {
         jLabel7.setText("Balance Due");
 
         addCreditorPaymentDateComboBox.setToolTipText("");
+        addCreditorPaymentDateComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addCreditorPaymentDateComboBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -421,6 +446,7 @@ public class IMGui extends javax.swing.JFrame {
 
     private void homeTabComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_homeTabComponentShown
         updateTable();
+        populatePayeeList();
     }//GEN-LAST:event_homeTabComponentShown
 
     private void addPaymentListBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPaymentListBoxActionPerformed
@@ -430,8 +456,19 @@ public class IMGui extends javax.swing.JFrame {
 
     private void addPaymentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPaymentButtonActionPerformed
         // TODO add your handling code for adding payment:
-        // Call addPayee here:
+        if (addPaymentListBox.getSelectedItem() != null){
+            Creditor selectedCreditor = (Creditor)addPaymentListBox.getSelectedItem();
+            if (!selectedCreditor.getStatus()){
+                accountant.changeStatus(selectedCreditor);
+            }
+            populatePayeeList();
+            updateTable();
+        }
     }//GEN-LAST:event_addPaymentButtonActionPerformed
+
+    private void addCreditorPaymentDateComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCreditorPaymentDateComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addCreditorPaymentDateComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
